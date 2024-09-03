@@ -1,15 +1,17 @@
 import 'dart:async' show StreamSubscription;
 import 'dart:io';
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide ColorScheme;
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart'
     show SharedPreferences;
 import 'package:flutter_authgear/flutter_authgear.dart';
 
-const authgearEndpoint = "https://migrate-tool-xamarin-flutter.authgear-staging.com";
+const authgearEndpoint =
+    "https://migrate-tool-xamarin-flutter.authgear-staging.com";
 const authgearClientID = "9f01ea8c46d4bc22";
-const redirectURI = "com.authgear.exampleapp.flutter://host/path";
+const redirectURI = "com.authgear.sdk.migratepluginexampleapp.xamarinflutter://host/path";
 var wechatRedirectURI = "";
 
 const _nativeMethodChannel = MethodChannel("example");
@@ -31,7 +33,7 @@ void main() {
   }
   if (Platform.isAndroid) {
     wechatRedirectURI =
-        "com.authgear.exampleapp.flutter://host/open_wechat_app";
+        "com.authgear.sdk.migratepluginexampleapp.xamarinflutter://host/open_wechat_app";
   }
   // debugPaintSizeEnabled = true;
   runApp(const MyApp());
@@ -288,8 +290,10 @@ class _MyAppState extends State<MyApp> {
 
     void init() async {
       _sharedPreferences = await SharedPreferences.getInstance();
-      final endpoint = _sharedPreferences.getString("authgear.endpoint") ?? authgearEndpoint;
-      final clientID = _sharedPreferences.getString("authgear.clientID") ?? authgearClientID;
+      final endpoint =
+          _sharedPreferences.getString("authgear.endpoint") ?? authgearEndpoint;
+      final clientID =
+          _sharedPreferences.getString("authgear.clientID") ?? authgearClientID;
       _endpointController.text = endpoint;
       _clientIDController.text = clientID;
     }
@@ -1089,7 +1093,9 @@ class _MyAppState extends State<MyApp> {
       });
       await _authgear.wechatAuthCallback(state: state, code: code);
     } on PlatformException catch (e) {
-      print("exception: $e");
+      if (kDebugMode) {
+        print("exception: $e");
+      }
     }
   }
 

@@ -43,7 +43,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.authgear.migrate.tool.xamarin.flutter.sample"
+        applicationId "com.authgear.sdk.migratepluginexampleapp.xamarinflutter"
         // minSdkVersion flutter.minSdkVersion
         // 21 is required to use androidx.security
         minSdkVersion 21

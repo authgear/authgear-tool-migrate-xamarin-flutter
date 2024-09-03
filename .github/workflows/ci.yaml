@@ -1,0 +1,121 @@
+name: CI
+
+on:
+  push:
+    branches:
+    - "*"
+    - "!gh-pages"
+    tags:
+    - "*"
+  pull_request:
+    branches:
+    - "*"
+    - "!gh-pages"
+
+jobs:
+  test-xamarin:
+    runs-on: macos-12
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-dotnet@v3
+      with:
+        global-json-file: ./global.json
+    - working-directory: ./XamarinFormSample
+      run: dotnet format --verify-no-changes
+  test-flutter:
+    runs-on: macos-12
+    steps:
+    - uses: actions/checkout@v3
+    - uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.10.0'
+        channel: 'stable'
+    - working-directory: flutter-example
+      run: |
+        flutter pub get
+        flutter test
+        flutter analyze --no-fatal-infos
+        dart format --set-exit-if-changed lib
+  flutter-android:
+    runs-on: macos-13
+    needs: ["xamarin-android"] # Depends on xamarin so that its version code is always bigger to allow updating
+    if: ${{ github.ref == 'refs/heads/main' }}
+    defaults:
+      run:
+        working-directory: "./flutter-example"
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 16
+    # https://github.com/actions/runner-images/blob/main/images/macos/macos-13-Readme.md#java
+    - name: Set java version
+      run: |
+        echo "JAVA_HOME=$JAVA_HOME_17_X64" >> $GITHUB_ENV
+    - run: npm install -g appcenter-cli
+    - uses: subosito/flutter-action@v2
+      with:
+        # Do _NOT_ use the latest stable as those contain breaking changes
+        flutter-version: '3.10.0'
+        channel: 'stable'
+    - run: flutter pub get
+    - run: flutter test
+    - run: flutter analyze --no-fatal-infos
+    - run: dart format --set-exit-if-changed lib
+    - name: Build .apk
+      run: |
+        BUILD_NUMBER=$(date +%s)
+        flutter build apk --build-number $BUILD_NUMBER
+    - name: Distribute to App Center
+      env:
+        APPCENTER_ACCESS_TOKEN: ${{ secrets.ANDROID_APPCENTER_ACCESS_TOKEN }}
+      run: appcenter distribute release --debug --silent --file "./build/app/outputs/flutter-apk/app-release.apk" --group "Collaborators" --app "Oursky/Authgear-Migrate-Tool-Xamarin-To-Flutter-Sample" --release-notes "flutter"
+  xamarin-android:
+    runs-on: macos-12
+    needs: ["test-xamarin"]
+    if: ${{ github.ref == 'refs/heads/main' }}
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-dotnet@v3
+      with:
+        global-json-file: ./global.json
+    - uses: actions/setup-node@v3
+      with:
+        node-version: "18.x"
+    - name: Set Xamarin SDK versions
+      run: |
+        # https://github.com/actions/runner-images/blob/main/images/macos/macos-12-Readme.md
+        $VM_ASSETS/select-xamarin-sdk-v2.sh --mono=6.12 --ios=16.2 --android=13.2
+    - name: nuget restore
+      run: |
+        nuget restore ./XamarinFormSample/XamarinFormSample/XamarinFormSample.csproj
+        nuget restore ./XamarinFormSample/XamarinFormSample.Android/XamarinFormSample.Android.csproj
+    - name: Set versionCode
+      run: |
+        VERSION_CODE=$(date +%s)
+        sed -I "" -E 's/android:versionCode="[[:digit:]]+"/android:versionCode="'"$VERSION_CODE"'"/' XamarinFormSample/XamarinFormSample.Android/Properties/AndroidManifest.xml
+    - name: msbuild
+      run: msbuild ./XamarinFormSample/XamarinFormSample.Android/XamarinFormSample.Android.csproj /p:Configuration=Release /t:PackageForAndroid
+    - name: Run zipalign
+      run: |
+        BUILD_TOOLS_VERSION="35.0.0"
+        ls "$ANDROID_HOME/build-tools/$BUILD_TOOLS_VERSION"
+        "$ANDROID_HOME/build-tools/$BUILD_TOOLS_VERSION/zipalign" -p -f -v 4 ./XamarinFormSample/XamarinFormSample.Android/bin/Release/com.authgear.sdk.migratepluginexampleapp.xamarinflutter.apk "$RUNNER_TEMP/app-aligned.apk"
+    - name: Run apksigner
+      env:
+        ANDROID_KEYSTORE_PASSWORD: Abcd1234!
+        ANDROID_KEY_ALIAS: main
+        ANDROID_KEY_PASSWORD: Abcd1234!
+      run: |
+        BUILD_TOOLS_VERSION="35.0.0"
+        "$ANDROID_HOME/build-tools/$BUILD_TOOLS_VERSION/apksigner" sign \
+          --ks keystore-main.jks \
+          --ks-key-alias "$ANDROID_KEY_ALIAS" \
+          --ks-pass "pass:$ANDROID_KEYSTORE_PASSWORD" \
+          --key-pass "pass:$ANDROID_KEY_PASSWORD" \
+          --out "$RUNNER_TEMP/app-signed.apk" \
+          "$RUNNER_TEMP/app-aligned.apk"
+    - name: Distribute to App Center
+      env:
+        APPCENTER_ACCESS_TOKEN: ${{ secrets.ANDROID_APPCENTER_ACCESS_TOKEN }}
+      run: appcenter distribute release --debug --silent --file "$RUNNER_TEMP/app-signed.apk" --group "Collaborators" --app "Oursky/Authgear-Migrate-Tool-Xamarin-To-Flutter-Sample" --release-notes "xamarin"

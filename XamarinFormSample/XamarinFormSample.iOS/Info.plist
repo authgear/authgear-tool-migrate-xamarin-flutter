@@ -14,10 +14,10 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>com.authgear.migrate.tool.xamarin.flutter.sample://host/path</string>
+			<string>com.authgear.sdk.migratepluginexampleapp.xamarinflutter://host/path</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.authgear.migrate.tool.xamarin.flutter.sample</string>
+				<string>com.authgear.sdk.migratepluginexampleapp.xamarinflutter</string>
 			</array>
 		</dict>
 	</array>
