@@ -12,7 +12,7 @@ namespace XamarinFormSample.Droid
     [Activity(NoHistory = true, LaunchMode = LaunchMode.SingleTop, Exported = true)]
     [IntentFilter(new[] { Android.Content.Intent.ActionView },
         Categories = new[] { Android.Content.Intent.CategoryDefault, Android.Content.Intent.CategoryBrowsable },
-        DataScheme = "com.authgear.exampleapp.xamarin")]
+        DataScheme = "com.authgear.migrate.tool.xamarin.flutter.sample")]
     public class WebAuthenticationCallbackActivity : Xamarin.Essentials.WebAuthenticatorCallbackActivity
     {
     }

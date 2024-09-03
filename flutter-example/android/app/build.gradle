@@ -43,7 +43,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.authgear.exampleapp.flutter"
+        applicationId "com.authgear.migrate.tool.xamarin.flutter.sample"
         // minSdkVersion flutter.minSdkVersion
         // 21 is required to use androidx.security
         minSdkVersion 21
@@ -53,11 +53,20 @@ android {
     }
 
     signingConfigs {
+        def file = rootProject.file("keystore-main.properties")
+        def props = new Properties()
+        props.load(new FileInputStream(file))
+        debug {
+            storeFile new File(file.parent, props['storeFile'])
+            keyAlias props['keyAlias']
+            storePassword props['storePassword']
+            keyPassword props['keyPassword']
+        }
         release {
-            storeFile file("keystore.jks")
-            storePassword project.ext.has("STORE_PASSWORD") ? project.ext["STORE_PASSWORD"] : ""
-            keyAlias project.ext.has("KEY_ALIAS") ? project.ext["KEY_ALIAS"] : ""
-            keyPassword project.ext.has("KEY_PASSWORD") ? project.ext["KEY_PASSWORD"] : ""
+            storeFile new File(file.parent, props['storeFile'])
+            keyAlias props['keyAlias']
+            storePassword props['storePassword']
+            keyPassword props['keyPassword']
         }
     }
 

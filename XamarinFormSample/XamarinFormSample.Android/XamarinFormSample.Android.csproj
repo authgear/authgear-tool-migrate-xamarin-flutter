@@ -37,6 +37,11 @@
     <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
     <BundleAssemblies>false</BundleAssemblies>
     <MandroidI18n />
+    <AndroidKeyStore>true</AndroidKeyStore>
+    <AndroidSigningKeyStore>D:\work\authgear-tool-migrate-xamarin-flutter\keystore-main.jks</AndroidSigningKeyStore>
+    <AndroidSigningStorePass>Abcd1234!</AndroidSigningStorePass>
+    <AndroidSigningKeyAlias>main</AndroidSigningKeyAlias>
+    <AndroidSigningKeyPass>Abcd1234!</AndroidSigningKeyPass>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -47,6 +52,11 @@
     <WarningLevel>4</WarningLevel>
     <AndroidManagedSymbols>true</AndroidManagedSymbols>
     <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
+    <AndroidKeyStore>true</AndroidKeyStore>
+    <AndroidSigningKeyStore>D:\work\authgear-tool-migrate-xamarin-flutter\keystore-main.jks</AndroidSigningKeyStore>
+    <AndroidSigningStorePass>Abcd1234!</AndroidSigningStorePass>
+    <AndroidSigningKeyAlias>main</AndroidSigningKeyAlias>
+    <AndroidSigningKeyPass>Abcd1234!</AndroidSigningKeyPass>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Mono.Android" />

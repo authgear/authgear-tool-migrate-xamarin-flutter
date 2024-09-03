@@ -4,5 +4,6 @@
     <SelectedDevice>Google Pixel 7a</SelectedDevice>
     <SelectedPlatformGroup>PhysicalDevice</SelectedPlatformGroup>
     <ActiveDebugProfile>Google Pixel 7a %28Android 14.0 - API 34%29</ActiveDebugProfile>
+    <DefaultDevice>Windows Subsystem for Android</DefaultDevice>
   </PropertyGroup>
 </Project>

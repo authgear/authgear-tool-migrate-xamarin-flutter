@@ -4,7 +4,7 @@
 <dict>
 	<key>keychain-access-groups</key>
 	<array>
-		<string>com.authgear.exampleapp.xamarin</string>
+		<string>com.authgear.migrate.tool.xamarin.flutter.sample</string>
 	</array>
 </dict>
 </plist>

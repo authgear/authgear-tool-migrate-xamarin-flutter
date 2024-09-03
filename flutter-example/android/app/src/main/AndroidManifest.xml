@@ -6,7 +6,7 @@
         android:allowBackup="true"
         android:fullBackupContent="@xml/full_backup_content"
         android:dataExtractionRules="@xml/data_extraction_rules"
-        android:label="Authgear Flutter"
+        android:label="Authgear Migrate Tool XamarinToFlutter Flutter"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

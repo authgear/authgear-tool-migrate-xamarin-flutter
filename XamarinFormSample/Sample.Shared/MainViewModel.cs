@@ -19,7 +19,7 @@ namespace AuthgearSample
         public delegate void ErrorRaisedHandler(object sender, Exception e);
         private AuthgearSdk authgear;
         private readonly IAuthgearFactory authgearFactory;
-        public readonly string RedirectUri = "com.authgear.exampleapp.xamarin://host/path";
+        public readonly string RedirectUri = "com.authgear.migrate.tool.xamarin.flutter.sample://host/path";
         public string ClientId { get; set; } =
             Preferences.Get("authgear.clientID", Config.AuthgearClientId);
         public string AuthgearEndpoint { get; set; } =
