@@ -1,9 +1,9 @@
-package com.authgear.exampleapp.flutter.wxapi
+package com.authgear.sdk.migratepluginexampleapp.xamarinflutter.wxapi
 
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import com.authgear.exampleapp.flutter.MainActivity
+import com.authgear.sdk.migratepluginexampleapp.xamarinflutter.MainActivity
 import com.authgear.flutter.AuthgearPlugin
 import com.tencent.mm.opensdk.modelbase.BaseReq
 import com.tencent.mm.opensdk.modelbase.BaseResp

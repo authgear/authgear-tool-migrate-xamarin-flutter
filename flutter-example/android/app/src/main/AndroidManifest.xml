@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.authgear.exampleapp.flutter">
+    package="com.authgear.sdk.migratepluginexampleapp.xamarinflutter">
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- NOTE(backup): Please search NOTE(backup) before you modify allowBackup, fullBackupContent, or dataExtractionRules -->
     <application
@@ -40,18 +40,18 @@
                 <data
                     android:host="host"
                     android:pathPrefix="/path"
-                    android:scheme="com.authgear.exampleapp.flutter" />
+                    android:scheme="com.authgear.sdk.migratepluginexampleapp.xamarinflutter" />
                 <data
                     android:host="host"
                     android:pathPrefix="/open_wechat_app"
-                    android:scheme="com.authgear.exampleapp.flutter" />
+                    android:scheme="com.authgear.sdk.migratepluginexampleapp.xamarinflutter" />
             </intent-filter>
         </activity>
        <activity
            android:name=".wxapi.WXEntryActivity"
            android:theme="@style/LaunchTheme"
            android:exported="true"
-           android:taskAffinity="com.authgear.exampleapp.flutter"
+           android:taskAffinity="com.authgear.sdk.migratepluginexampleapp.xamarinflutter"
            android:launchMode="singleTask">
        </activity>
         <!-- Don't delete the meta-data below.

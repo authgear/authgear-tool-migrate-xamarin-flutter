@@ -1,4 +1,4 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.authgear.exampleapp.flutter">
+    package="com.authgear.sdk.migratepluginexampleapp.xamarinflutter">
     <application android:usesCleartextTraffic="true" />
 </manifest>

@@ -1,4 +1,4 @@
-package com.authgear.exampleapp.flutter
+package com.authgear.sdk.migratepluginexampleapp.xamarinflutter
 
 import com.tencent.mm.opensdk.modelmsg.SendAuth
 import com.tencent.mm.opensdk.openapi.IWXAPI
