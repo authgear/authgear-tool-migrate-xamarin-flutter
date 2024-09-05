@@ -14,11 +14,14 @@ dependencies:
   cupertino_icons: ^1.0.2
   shared_preferences: ^2.0.13
   flutter_authgear: ^1.7.0
+  package_info_plus: 4.2.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^1.0.0
+  flutter_lints: ^2.0.0
+  authgear_sdk_tool_migrate_xamarin_flutter:
+    path: ../migratetool
 
 flutter:
   uses-material-design: true

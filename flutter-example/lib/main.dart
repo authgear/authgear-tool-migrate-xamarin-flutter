@@ -1,9 +1,11 @@
 import 'dart:async' show StreamSubscription;
 import 'dart:io';
 import 'dart:convert';
+import 'package:authgear_sdk_tool_migrate_xamarin_flutter/migratetool.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide ColorScheme;
 import 'package:flutter/services.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart'
     show SharedPreferences;
 import 'package:flutter_authgear/flutter_authgear.dart';
@@ -11,7 +13,8 @@ import 'package:flutter_authgear/flutter_authgear.dart';
 const authgearEndpoint =
     "https://migrate-tool-xamarin-flutter.authgear-staging.com";
 const authgearClientID = "9f01ea8c46d4bc22";
-const redirectURI = "com.authgear.sdk.migratepluginexampleapp.xamarinflutter://host/path";
+const redirectURI =
+    "com.authgear.sdk.migratepluginexampleapp.xamarinflutter://host/path";
 var wechatRedirectURI = "";
 
 const _nativeMethodChannel = MethodChannel("example");
@@ -837,6 +840,15 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> _onPressConfigure() async {
+    final packageName = (await PackageInfo.fromPlatform()).packageName;
+    try {
+      await migrate(packageName);
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+    }
+
     final endpoint = _endpointController.text;
     final clientID = _clientIDController.text;
 
