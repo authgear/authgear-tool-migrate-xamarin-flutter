@@ -194,6 +194,14 @@ class MigratetoolPlugin: FlutterPlugin, MethodCallHandler {
         } else {
           result.success(xamarinStorage.hasXamarinData(packageName, containerName))
         }
+      } else if (call.method == "hasFlutterData") {
+        val packageName = call.argument<String>("packageName")
+        val containerName = call.argument<String>("containerName")
+        if (packageName == null || containerName == null) {
+          result.error("INVALID_ARGUMENT", "Expected {packageName, containerName}", null);
+        } else {
+          result.success(hasFlutterData(packageName, containerName))
+        }
       } else if (call.method == "migrate") {
         val packageName = call.argument<String>("packageName")
         val containerName = call.argument<String>("containerName")
@@ -221,7 +229,6 @@ class MigratetoolPlugin: FlutterPlugin, MethodCallHandler {
     val anonymousId = xamarinStorage.getValue(keyStore, packageName, containerName, keyAnonymousId)
     val biometricKeyId = xamarinStorage.getValue(keyStore, packageName, containerName, keyBiometricKeyId)
     val keyMaker = KeyMaker()
-    val prefs = getSharedPreferences()
     if (refreshToken != null) {
       storageSetItem(keyMaker.keyRefreshToken(containerName), refreshToken)
     }
@@ -232,6 +239,14 @@ class MigratetoolPlugin: FlutterPlugin, MethodCallHandler {
       storageSetItem(keyMaker.keyBiometricKeyId(containerName), biometricKeyId)
     }
     return false
+  }
+
+  fun hasFlutterData(packageName: String, containerName: String): Boolean {
+    val keyMaker = KeyMaker()
+    val hasRefreshToken = storageGetItem(keyMaker.keyRefreshToken(containerName)) != null
+    val hasAnonymousKeyId = storageGetItem(keyMaker.keyAnonymousKeyId(containerName)) != null
+    val hasBiometricKeyId = storageGetItem(keyMaker.keyBiometricKeyId(containerName)) != null
+    return hasRefreshToken || hasAnonymousKeyId || hasBiometricKeyId
   }
 
   // Direct copy of https://github.com/authgear/authgear-sdk-flutter/blob/main/android/src/main/kotlin/com/authgear/flutter/AuthgearPlugin.kt#L469C3-L486C4
@@ -249,6 +264,25 @@ class MigratetoolPlugin: FlutterPlugin, MethodCallHandler {
           return storageSetItem(key, value)
         }
       }
+    }
+  }
+
+  private fun storageGetItem(key: String): String? {
+    try {
+      val sharedPreferences = this.getSharedPreferences()
+      val value = sharedPreferences.getString(key, null)
+      return value
+    } catch (e: Exception) {
+      // NOTE(backup): Please search NOTE(backup) to understand what is going on here.
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        if (e is GeneralSecurityException) {
+          Log.w(TAG, "try to recover from backup problem in storageGetItem", e)
+          val context = pluginBinding?.applicationContext!!
+          deleteSharedPreferences(context, ENCRYPTED_SHARED_PREFERENCES_NAME)
+          return storageGetItem(key)
+        }
+      }
+      throw e
     }
   }
 

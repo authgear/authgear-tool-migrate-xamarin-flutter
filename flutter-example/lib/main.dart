@@ -842,7 +842,10 @@ class _MyAppState extends State<MyApp> {
   Future<void> _onPressConfigure() async {
     final packageName = (await PackageInfo.fromPlatform()).packageName;
     try {
-      await migrate(packageName);
+      final result = await migrate(packageName);
+      if (kDebugMode) {
+        print(result);
+      }
     } catch (e) {
       if (kDebugMode) {
         print(e);
