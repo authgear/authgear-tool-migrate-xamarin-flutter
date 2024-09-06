@@ -2,22 +2,22 @@ import Flutter
 import UIKit
 
 public class MigratetoolPlugin: NSObject, FlutterPlugin {
-  private static keyRefreshToken: String = "refresh_token"
-  private static keyAnonymousId: String = "anonymousId"
-  private static keyBiometricKeyId: String = "biometricKeyId"
-  private static partialKeys: String[] = [keyRefreshToken, keyAnonymousId, keyBiometricKeyId];
+  private static let keyRefreshToken: String = "refresh_token"
+  private static let keyAnonymousId: String = "anonymousId"
+  private static let keyBiometricKeyId: String = "biometricKeyId"
+  private static let partialKeys: [String] = [keyRefreshToken, keyAnonymousId, keyBiometricKeyId];
   class KeyMaker {
     func scopedKey(key: String) -> String {
       return "authgear_\(key)"
     }
     func keyRefreshToken(namespace: String) -> String {
-      return scopedKey("\(namespace)_refreshToken")
+        return scopedKey(key: "\(namespace)_refreshToken")
     }
     func keyAnonymousKeyId(namespace: String) -> String {
-      return scopedKey("\(namespace)_anonymousKeyID")
+        return scopedKey(key: "\(namespace)_anonymousKeyID")
     }
     func keyBiometricKeyId(namespace: String) -> String {
-      return scopedKey("\(namespace)_biometricKeyID")
+        return scopedKey(key: "\(namespace)_biometricKeyID")
     }
   }
   public static func register(with registrar: FlutterPluginRegistrar) {
@@ -29,7 +29,47 @@ public class MigratetoolPlugin: NSObject, FlutterPlugin {
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
     switch call.method {
     case "hasFlutterData":
-      result(hasFlutterData())
+        guard let args = call.arguments as? Dictionary<String, String> else {
+            result("INVALID_ARGUMENT")
+            return
+        }
+        guard let containerName = args["containerName"] else {
+            result("INVALID_ARGUMENT")
+            return
+        }
+      result(hasFlutterData(containerName: containerName))
+    case "hasXamarinData":
+        guard let args = call.arguments as? Dictionary<String, String> else {
+            result("INVALID_ARGUMENT")
+                return
+        }
+        guard let containerName = args["containerName"] else {
+            result("INVALID_ARGUMENT")
+            return
+        }
+        guard let packageName = args["packageName"] else {
+            result("INVALID_ARGUMENT")
+            return
+        }
+      result(hasXamarinData(packageName: packageName, containerName: containerName))
+    case "migrate":
+        guard let args = call.arguments as? Dictionary<String, String> else {
+            result("INVALID_ARGUMENT")
+            return
+        }
+        guard let containerName = args["containerName"] else {
+            result("INVALID_ARGUMENT")
+            return
+        }
+        guard let packageName = args["packageName"] else {
+            result("INVALID_ARGUMENT")
+            return
+        }
+        do {
+            result(try migrate(packageName: packageName, containerName: containerName))
+        } catch (let e) {
+            result(e)
+        }
     default:
       result(FlutterMethodNotImplemented)
     }
@@ -37,9 +77,9 @@ public class MigratetoolPlugin: NSObject, FlutterPlugin {
 
   private func hasFlutterData(containerName: String) -> Bool {
     let keyMaker = KeyMaker()
-    let hasRefreshToken = storageGetItem(keyMaker.keyRefreshToken(containerName)) != nil
-    let hasAnonymousKeyId = storageGetItem(keyMaker.keyAnonymousKeyId(containerName)) != nil
-    let hasBiometricKeyId = storageGetItem(keyMaker.keyBiometricKeyId(containerName)) != nil
+    let hasRefreshToken = storageGetItem(key: keyMaker.keyRefreshToken(namespace: containerName)) != nil
+    let hasAnonymousKeyId = storageGetItem(key: keyMaker.keyAnonymousKeyId(namespace: containerName)) != nil
+    let hasBiometricKeyId = storageGetItem(key: keyMaker.keyBiometricKeyId(namespace: containerName)) != nil
     return hasRefreshToken || hasAnonymousKeyId || hasBiometricKeyId
   }
 
@@ -52,10 +92,10 @@ public class MigratetoolPlugin: NSObject, FlutterPlugin {
   }
 
   private func hasXamarinData(packageName: String, containerName: String) -> Bool {
-    let alias = xamarinEssentialAlias(packageName)
-    for subKey in partialKeys {
-      let fullKey = xamarinFullKey(containerName, subKey)
-      let value = storageGetItem(fullKey, alias)
+    let alias = xamarinEssentialAlias(packageName: packageName)
+    for subKey in MigratetoolPlugin.partialKeys {
+    let fullKey = xamarinFullKey(containerName: containerName, subKey: subKey)
+    let value = storageGetItem(key: fullKey, service: alias)
       if value != nil {
         return true
       }
@@ -63,26 +103,26 @@ public class MigratetoolPlugin: NSObject, FlutterPlugin {
     return false
   }
 
-  private func migrate(packageName: String, containerName: String) -> Bool {
-    let alias = xamarinEssentialAlias(packageName)
-    let refreshToken = storageGetItem(xamarinFullKey(containerName, keyRefreshToken))
-    let anonymousId = storageGetItem(xamarinFullKey(containerName, keyAnonymousId))
-    let biometricKeyId = storageGetItem(xamarinFullKey(containerName, keyBiometricKeyId))
+  private func migrate(packageName: String, containerName: String) throws -> Bool {
+    let alias = xamarinEssentialAlias(packageName: packageName)
+    let refreshToken = storageGetItem(key: xamarinFullKey(containerName: containerName, subKey: MigratetoolPlugin.keyRefreshToken))
+    let anonymousId = storageGetItem(key: xamarinFullKey(containerName: containerName, subKey: MigratetoolPlugin.keyAnonymousId))
+    let biometricKeyId = storageGetItem(key: xamarinFullKey(containerName: containerName, subKey: MigratetoolPlugin.keyBiometricKeyId))
     let keyMaker = KeyMaker()
-    if refreshToken != nil {
-      storageSetItem(keyMaker.keyRefreshToken(containerName), refreshToken)
+    if let nonNilToken = refreshToken {
+        try storageSetItem(key: keyMaker.keyRefreshToken(namespace: containerName), value: nonNilToken)
     }
-    if anonymousId != nil {
-      storageSetItem(keyMaker.keyAnonymousKeyId(containerName), anonymousId)
+    if let nonNilAnonymousId = anonymousId{
+        try storageSetItem(key: keyMaker.keyAnonymousKeyId(namespace: containerName), value: nonNilAnonymousId)
     }
-    if biometricKeyId != nil {
-      storageSetItem(keyMaker.keyBiometricKeyId(containerName), biometricKeyId)
+    if let nonNilBiometricKeyId = biometricKeyId {
+        try storageSetItem(key: keyMaker.keyBiometricKeyId(namespace: containerName), value: nonNilBiometricKeyId)
     }
     return false
   }
 
   // Direct copy of https://github.com/authgear/authgear-sdk-flutter/blob/main/ios/Classes/SwiftAuthgearPlugin.swift#L389
-  private func storageSetItem(key: String, value: String, result: FlutterResult) {
+  private func storageSetItem(key: String, value: String) throws {
     let data = value.data(using: .utf8)!
     let updateQuery: [String: Any] = [
       kSecClass as String: kSecClassGenericPassword,
@@ -95,7 +135,7 @@ public class MigratetoolPlugin: NSObject, FlutterPlugin {
     let updateStatus = SecItemUpdate(updateQuery as CFDictionary, update as CFDictionary)
     switch updateStatus {
     case errSecSuccess:
-      result(nil)
+      return
     default:
       let addQuery: [String: Any] = [
         kSecClass as String: kSecClassGenericPassword,
@@ -106,9 +146,9 @@ public class MigratetoolPlugin: NSObject, FlutterPlugin {
       let addStatus = SecItemAdd(addQuery as CFDictionary, nil)
       switch addStatus {
       case errSecSuccess:
-        result(nil)
+        return
       default:
-        result(FlutterError(status: addStatus))
+          throw NSError(domain: "Fail to set item", code: 0)
       }
     }
   }
@@ -116,7 +156,7 @@ public class MigratetoolPlugin: NSObject, FlutterPlugin {
 
   // Direct copy of https://github.com/authgear/authgear-sdk-flutter/blob/main/ios/Classes/SwiftAuthgearPlugin.swift#L420C3-L442C4
   private func storageGetItem(key: String, service: String? = nil) -> String? {
-    let query: [String: Any] = [
+    var query: [String: Any] = [
       kSecClass as String: kSecClassGenericPassword,
       kSecAttrAccount as String: key,
       kSecMatchLimit as String: kSecMatchLimitOne,
