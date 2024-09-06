@@ -1,6 +1,10 @@
 PODS:
+  - authgear_sdk_tool_migrate_xamarin_flutter (0.0.1):
+    - Flutter
   - Flutter (1.0.0)
   - flutter_authgear (0.1.0):
+    - Flutter
+  - package_info_plus (0.4.5):
     - Flutter
   - shared_preferences_foundation (0.0.1):
     - Flutter
@@ -8,8 +12,10 @@ PODS:
   - WechatOpenSDK (2.0.4)
 
 DEPENDENCIES:
+  - authgear_sdk_tool_migrate_xamarin_flutter (from `.symlinks/plugins/authgear_sdk_tool_migrate_xamarin_flutter/ios`)
   - Flutter (from `Flutter`)
   - flutter_authgear (from `.symlinks/plugins/flutter_authgear/ios`)
+  - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
   - WechatOpenSDK (~> 2.0.4)
 
@@ -18,19 +24,25 @@ SPEC REPOS:
     - WechatOpenSDK
 
 EXTERNAL SOURCES:
+  authgear_sdk_tool_migrate_xamarin_flutter:
+    :path: ".symlinks/plugins/authgear_sdk_tool_migrate_xamarin_flutter/ios"
   Flutter:
     :path: Flutter
   flutter_authgear:
     :path: ".symlinks/plugins/flutter_authgear/ios"
+  package_info_plus:
+    :path: ".symlinks/plugins/package_info_plus/ios"
   shared_preferences_foundation:
     :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
 
 SPEC CHECKSUMS:
+  authgear_sdk_tool_migrate_xamarin_flutter: f296475a31a7d1e87bff2fc71434ee54c3d2866a
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   flutter_authgear: c50fc59b92c35dbc8bbd51b15413ce050f374892
+  package_info_plus: 115f4ad11e0698c8c1c5d8a689390df880f47e85
   shared_preferences_foundation: b4c3b4cddf1c21f02770737f147a3f5da9d39695
   WechatOpenSDK: 290989072e87b79d52225a01bb4e5e58f6f88593
 
-PODFILE CHECKSUM: 44c39e677e4deb4c81fcd3926dd89fe108a726c0
+PODFILE CHECKSUM: 598ee8b6799da2c99b66434798f7f128ec4ef92f
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.14.3

@@ -3,7 +3,7 @@
 # Run `pod lib lint migratetool.podspec` to validate before publishing.
 #
 Pod::Spec.new do |s|
-  s.name             = 'migratetool'
+  s.name             = 'authgear_sdk_tool_migrate_xamarin_flutter'
   s.version          = '0.0.1'
   s.summary          = 'A new Flutter plugin project.'
   s.description      = <<-DESC
