@@ -125,18 +125,18 @@ jobs:
     if: ${{ github.ref == 'refs/heads/main' }}
     defaults:
       run:
-        working-directory: "./example"
+        working-directory: "./flutter-example"
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
       with:
-        node-version-file: "./.tool-versions"
+        node-version: 16
     - run: sudo xcode-select -s /Applications/Xcode_15.2.app/Contents/Developer
     - run: npm install -g appcenter-cli
     - uses: subosito/flutter-action@v2
       with:
-        # This has to be kept in sync with .tool-versions
-        flutter-version: '3.24.2'
+        # Do _NOT_ use the latest stable as those contain breaking changes
+        flutter-version: '3.10.0'
         channel: 'stable'
         # This action takes 1m30s to finish. Enable cache to make it shorter.
         cache: true
@@ -172,7 +172,7 @@ jobs:
     - name: Distribute to App Center
       env:
         APPCENTER_ACCESS_TOKEN: ${{ secrets.IOS_APPCENTER_ACCESS_TOKEN }}
-      run: appcenter distribute release --debug --silent --file "./build/ios/ipa/Authgear Flutter.ipa" --store "App Store Connect Users" --app "Oursky/Authgear-Migrate-Tool-Xamarin-To-Flutter-Sample" --release-notes "flutter ios"
+      run: appcenter distribute release --debug --silent --file "./build/ios/ipa/Authgear Flutter.ipa" --group "Collaborators" --app "Oursky/Authgear-Migrate-Tool-Xamarin-To-Flutter-Sample" --release-notes "flutter ios"
   xamarin-ios:
     runs-on: macos-12
     needs: ["test-xamarin", "test-flutter"]
@@ -227,7 +227,7 @@ jobs:
     - name: Distribute to App Center
       env:
         APPCENTER_ACCESS_TOKEN: ${{ secrets.IOS_APPCENTER_ACCESS_TOKEN }}
-      run: appcenter distribute release --debug --silent --file "$RUNNER_TEMP/XamarinFormSample.iOS.ipa" --store "App Store Connect Users" --app "Oursky/Authgear-Migrate-Tool-Xamarin-To-Flutter-Sample" --release-notes "no release notes"
+      run: appcenter distribute release --debug --silent --file "$RUNNER_TEMP/XamarinFormSample.iOS.ipa" --group "Collaborators" --app "Oursky/Authgear-Migrate-Tool-Xamarin-To-Flutter-Sample" --release-notes "xamarin ios"
     - name: Clean up keychain and provisioning profile
       if: ${{ always() }}
       run: |
