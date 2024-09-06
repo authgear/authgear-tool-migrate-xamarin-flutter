@@ -238,7 +238,7 @@ class MigratetoolPlugin: FlutterPlugin, MethodCallHandler {
     if (biometricKeyId != null) {
       storageSetItem(keyMaker.keyBiometricKeyId(containerName), biometricKeyId)
     }
-    return false
+    return refreshToken != null || anonymousId != null || biometricKeyId != null
   }
 
   fun hasFlutterData(packageName: String, containerName: String): Boolean {

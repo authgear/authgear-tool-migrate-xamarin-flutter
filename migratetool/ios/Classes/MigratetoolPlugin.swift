@@ -21,7 +21,7 @@ public class MigratetoolPlugin: NSObject, FlutterPlugin {
     }
   }
   public static func register(with registrar: FlutterPluginRegistrar) {
-    let channel = FlutterMethodChannel(name: "migratetool", binaryMessenger: registrar.messenger())
+    let channel = FlutterMethodChannel(name: "authgear_sdk_tool_migrate_xamarin_flutter", binaryMessenger: registrar.messenger())
     let instance = MigratetoolPlugin()
     registrar.addMethodCallDelegate(instance, channel: channel)
   }
@@ -88,7 +88,7 @@ public class MigratetoolPlugin: NSObject, FlutterPlugin {
   }
 
   private func xamarinEssentialAlias(packageName: String) -> String {
-    return "\(packageName)_xamarinessentials"
+    return "\(packageName).xamarinessentials"
   }
 
   private func hasXamarinData(packageName: String, containerName: String) -> Bool {
@@ -105,9 +105,9 @@ public class MigratetoolPlugin: NSObject, FlutterPlugin {
 
   private func migrate(packageName: String, containerName: String) throws -> Bool {
     let alias = xamarinEssentialAlias(packageName: packageName)
-    let refreshToken = storageGetItem(key: xamarinFullKey(containerName: containerName, subKey: MigratetoolPlugin.keyRefreshToken))
-    let anonymousId = storageGetItem(key: xamarinFullKey(containerName: containerName, subKey: MigratetoolPlugin.keyAnonymousId))
-    let biometricKeyId = storageGetItem(key: xamarinFullKey(containerName: containerName, subKey: MigratetoolPlugin.keyBiometricKeyId))
+    let refreshToken = storageGetItem(key: xamarinFullKey(containerName: containerName, subKey: MigratetoolPlugin.keyRefreshToken), service: alias)
+    let anonymousId = storageGetItem(key: xamarinFullKey(containerName: containerName, subKey: MigratetoolPlugin.keyAnonymousId), service: alias)
+    let biometricKeyId = storageGetItem(key: xamarinFullKey(containerName: containerName, subKey: MigratetoolPlugin.keyBiometricKeyId), service: alias)
     let keyMaker = KeyMaker()
     if let nonNilToken = refreshToken {
         try storageSetItem(key: keyMaker.keyRefreshToken(namespace: containerName), value: nonNilToken)
@@ -118,7 +118,7 @@ public class MigratetoolPlugin: NSObject, FlutterPlugin {
     if let nonNilBiometricKeyId = biometricKeyId {
         try storageSetItem(key: keyMaker.keyBiometricKeyId(namespace: containerName), value: nonNilBiometricKeyId)
     }
-    return false
+    return refreshToken != nil || anonymousId != nil || biometricKeyId != nil
   }
 
   // Direct copy of https://github.com/authgear/authgear-sdk-flutter/blob/main/ios/Classes/SwiftAuthgearPlugin.swift#L389
