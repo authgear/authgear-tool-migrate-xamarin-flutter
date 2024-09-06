@@ -27,7 +27,7 @@
     <MtouchArch>x86_64</MtouchArch>
     <MtouchLink>None</MtouchLink>
     <MtouchDebug>true</MtouchDebug>
-    <CodesignProvision>Authgear Demo Xamarin Dev</CodesignProvision>
+    <CodesignProvision>authgear-tool-migrate-xamarin-flutter DEV</CodesignProvision>
     <CodesignKey>iPhone Developer</CodesignKey>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
   </PropertyGroup>
@@ -39,7 +39,7 @@
     <WarningLevel>4</WarningLevel>
     <MtouchLink>None</MtouchLink>
     <MtouchArch>x86_64</MtouchArch>
-    <CodesignProvision>Authgear Demo Xamarin</CodesignProvision>
+    <CodesignProvision>authgear-tool-migrate-xamarin-flutter PROD</CodesignProvision>
     <CodesignKey>Apple Distribution: Oursky Limited (M7HB6C3N6X)</CodesignKey>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
   </PropertyGroup>
