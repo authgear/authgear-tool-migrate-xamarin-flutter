@@ -58,7 +58,7 @@
     </CodesignEntitlements>
     <MtouchLink>None</MtouchLink>
     <MtouchInterpreter>-all</MtouchInterpreter>
-    <CodesignProvision>Authgear Demo Xamarin Dev</CodesignProvision>
+    <CodesignProvision>authgear-tool-migrate-xamarin-flutter DEV</CodesignProvision>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <DebugType>none</DebugType>
@@ -74,7 +74,7 @@
     <CodesignEntitlements>
     </CodesignEntitlements>
     <MtouchLink>SdkOnly</MtouchLink>
-    <CodesignProvision>Authgear Demo Xamarin</CodesignProvision>
+    <CodesignProvision>authgear-tool-migrate-xamarin-flutter PROD</CodesignProvision>
     <BuildIpa>true</BuildIpa>
     <IpaIncludeArtwork>true</IpaIncludeArtwork>
     <DeviceSpecificBuild>
