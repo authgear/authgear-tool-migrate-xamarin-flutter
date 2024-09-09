@@ -1,5 +1,9 @@
 name: CI
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   push:
     branches:
@@ -85,7 +89,7 @@ jobs:
     - name: Set Xamarin SDK versions
       run: |
         # https://github.com/actions/runner-images/blob/main/images/macos/macos-12-Readme.md
-        $VM_ASSETS/select-xamarin-sdk-v2.sh --mono=6.12 --ios=16.2 --android=13.2
+        $VM_ASSETS/select-xamarin-sdk-v2.sh --mono=6.12 --ios=17.0 --android=13.2
     - name: nuget restore
       run: |
         nuget restore ./XamarinFormSample/XamarinFormSample/XamarinFormSample.csproj
@@ -128,11 +132,10 @@ jobs:
         working-directory: "./flutter-example"
     steps:
     - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version: 16
     - run: sudo xcode-select -s /Applications/Xcode_15.2.app/Contents/Developer
-    - run: npm install -g appcenter-cli
+    - run: gem install bundler
+    - working-directory: flutter-example
+      run: bundler install
     - uses: subosito/flutter-action@v2
       with:
         # Do _NOT_ use the latest stable as those contain breaking changes
@@ -169,19 +172,17 @@ jobs:
       run: |
         BUILD_NUMBER=$(date +%s)
         flutter build ipa --export-options-plist ./exportOptions.plist --build-number $BUILD_NUMBER
-    - name: Distribute to App Center
-      env:
-        APPCENTER_ACCESS_TOKEN: ${{ secrets.IOS_APPCENTER_ACCESS_TOKEN }}
-      run: appcenter distribute release --debug --silent --file "./build/ios/ipa/Authgear Flutter.ipa" --group "Collaborators" --app "Oursky/Authgear-Migrate-Tool-Xamarin-To-Flutter-Sample" --release-notes "flutter ios"
+    - name: Distribute to App Store Connect
+      run: bundle exec fastlane app_testflight
   xamarin-ios:
-    runs-on: macos-12
-    needs: ["test-xamarin", "test-flutter"]
+    runs-on: macos-14
+    # needs: ["test-xamarin", "test-flutter"]
     if: ${{ github.ref == 'refs/heads/main' }}
     steps:
     - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
-      with:
-        node-version: "18.x"
+    - run: gem install bundler
+    - working-directory: flutter-example
+      run: bundle install
     - uses: actions/setup-dotnet@v3
       with:
         global-json-file: ./global.json
@@ -191,7 +192,7 @@ jobs:
     - name: Set Xamarin SDK versions
       run: |
         # https://github.com/actions/runner-images/blob/main/images/macos/macos-12-Readme.md
-        $VM_ASSETS/select-xamarin-sdk-v2.sh --mono=6.12 --ios=16.2 --android=13.2
+        $VM_ASSETS/select-xamarin-sdk-v2.sh --mono=6.12 --ios=17.0 --android=13.2
     - run: sudo xcode-select -s /Applications/Xcode_14.2.app/Contents/Developer
     - name: nuget restore
       run: |
@@ -224,10 +225,15 @@ jobs:
         /usr/libexec/Plistbuddy -c "Set CFBundleVersion $BUILD_NUMBER" ./XamarinFormSample/XamarinFormSample.iOS/Info.plist
     - name: msbuild
       run: msbuild ./XamarinFormSample/XamarinFormSample.iOS/XamarinFormSample.iOS.csproj /p:Configuration=Release /p:Platform=iPhone /p:BuildIpa=true /t:Rebuild /p:IpaPackageDir="$RUNNER_TEMP"
-    - name: Distribute to App Center
+    - name: Distribute to App Store Connect
+      working-directory: XamarinFormSample
       env:
-        APPCENTER_ACCESS_TOKEN: ${{ secrets.IOS_APPCENTER_ACCESS_TOKEN }}
-      run: appcenter distribute release --debug --silent --file "$RUNNER_TEMP/XamarinFormSample.iOS.ipa" --group "Collaborators" --app "Oursky/Authgear-Migrate-Tool-Xamarin-To-Flutter-Sample" --release-notes "xamarin ios"
+        IOS_FASTLANE_APP_STORE_CONNECT_API_KEY_JSON_BASE64: ${{ secrets.IOS_FASTLANE_APP_STORE_CONNECT_API_KEY_JSON_BASE64 }}
+      run: |
+        export APP_STORE_CONNECT_API_KEY_FILE=$RUNNER_TEMP/app_store_connect_key.json
+        export APP_IPA_FILE_PATH=$RUNNER_TEMP/XamarinFormSample.iOS.ipa
+        echo -n "$IOS_FASTLANE_APP_STORE_CONNECT_API_KEY_JSON_BASE64" | base64 --decode -o $APP_STORE_CONNECT_API_KEY_FILE
+        bundle exec fastlane app_testflight
     - name: Clean up keychain and provisioning profile
       if: ${{ always() }}
       run: |

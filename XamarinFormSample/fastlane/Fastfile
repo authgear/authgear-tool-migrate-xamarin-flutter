@@ -1,0 +1,18 @@
+
+default_platform(:ios)
+
+platform :ios do
+  desc "Deploy app"
+  lane :app_deploy do |options|
+    app_testflight options
+  end
+
+  desc "Upload app to testflight"
+  lane :app_testflight do |options|
+    upload_to_testflight(
+      api_key_path: ENV['APP_STORE_CONNECT_API_KEY_FILE'],
+      ipa: ENV['APP_IPA_FILE_PATH'],
+      skip_waiting_for_build_processing: true
+    )
+  end
+end
