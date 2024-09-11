@@ -15,13 +15,16 @@ dependencies:
   shared_preferences: ^2.0.13
   flutter_authgear: ^1.7.0
   package_info_plus: 4.2.0
+  authgear_sdk_tool_migrate_xamarin_flutter:
+    git:
+      url: https://github.com/authgear/authgear-tool-migrate-xamarin-flutter
+      path: migratetool
+      ref: v0.0.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.0
-  authgear_sdk_tool_migrate_xamarin_flutter:
-    path: ../migratetool
 
 flutter:
   uses-material-design: true

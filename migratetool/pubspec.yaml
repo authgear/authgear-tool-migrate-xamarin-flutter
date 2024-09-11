@@ -1,5 +1,6 @@
 name: authgear_sdk_tool_migrate_xamarin_flutter
 description: Authgear Migrate Tool For Xamarin To Flutter
+repository: https://github.com/authgear/authgear-tool-migrate-xamarin-flutter/migratetool
 version: 0.0.1
 
 environment:
