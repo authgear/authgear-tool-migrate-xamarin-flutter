@@ -176,7 +176,7 @@ jobs:
         IOS_FASTLANE_APP_STORE_CONNECT_API_KEY_JSON_BASE64: ${{ secrets.IOS_FASTLANE_APP_STORE_CONNECT_API_KEY_JSON_BASE64 }}
       run: |
         export APP_STORE_CONNECT_API_KEY_FILE=$RUNNER_TEMP/app_store_connect_key.json
-        export APP_IPA_FILE_PATH="$pwd/build/ios/ipa/Authgear Flutter.ipa"
+        export APP_IPA_FILE_PATH="./build/ios/ipa/Authgear Flutter.ipa"
         echo -n "$IOS_FASTLANE_APP_STORE_CONNECT_API_KEY_JSON_BASE64" | base64 --decode -o $APP_STORE_CONNECT_API_KEY_FILE
         bundle exec fastlane app_testflight
   #xamarin-ios is removed for now as there is no trivial way to build ios17+ xamarin app on github action.
