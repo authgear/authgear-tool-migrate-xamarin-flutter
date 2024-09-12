@@ -19,7 +19,7 @@ dependencies:
     git:
       url: https://github.com/authgear/authgear-tool-migrate-xamarin-flutter
       path: migratetool
-      ref: v0.0.1
+      ref: v0.1.0
 
 dev_dependencies:
   flutter_test:
