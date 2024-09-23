@@ -38,7 +38,7 @@
     <BundleAssemblies>false</BundleAssemblies>
     <MandroidI18n />
     <AndroidKeyStore>true</AndroidKeyStore>
-    <AndroidSigningKeyStore>D:\work\authgear-tool-migrate-xamarin-flutter\keystore-main.jks</AndroidSigningKeyStore>
+    <AndroidSigningKeyStore>..\..\keystore-main.jks</AndroidSigningKeyStore>
     <AndroidSigningStorePass>Abcd1234!</AndroidSigningStorePass>
     <AndroidSigningKeyAlias>main</AndroidSigningKeyAlias>
     <AndroidSigningKeyPass>Abcd1234!</AndroidSigningKeyPass>
@@ -53,7 +53,7 @@
     <AndroidManagedSymbols>true</AndroidManagedSymbols>
     <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
     <AndroidKeyStore>true</AndroidKeyStore>
-    <AndroidSigningKeyStore>D:\work\authgear-tool-migrate-xamarin-flutter\keystore-main.jks</AndroidSigningKeyStore>
+    <AndroidSigningKeyStore>..\..\keystore-main.jks</AndroidSigningKeyStore>
     <AndroidSigningStorePass>Abcd1234!</AndroidSigningStorePass>
     <AndroidSigningKeyAlias>main</AndroidSigningKeyAlias>
     <AndroidSigningKeyPass>Abcd1234!</AndroidSigningKeyPass>
@@ -111,7 +111,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\XamarinFormSample\XamarinFormSample.csproj">
-      <Project>{4A2C9B15-4EB1-4595-8B8B-CA07A08F8EC7}</Project>
+      <Project>{873601B4-9B6E-4784-9D86-5573EB6BC935}</Project>
       <Name>XamarinFormSample</Name>
     </ProjectReference>
   </ItemGroup>
