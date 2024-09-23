@@ -19,6 +19,8 @@ var wechatRedirectURI = "";
 
 const _nativeMethodChannel = MethodChannel("example");
 
+const containerName = "BIOMETRIC";
+
 ColorScheme colorSchemeFromContext(BuildContext context) {
   final brightness = MediaQuery.of(context).platformBrightness;
   switch (brightness) {
@@ -240,7 +242,8 @@ class SessionStateButton extends StatelessWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  Authgear _authgear = Authgear(endpoint: "", clientID: "");
+  Authgear _authgear =
+      Authgear(name: containerName, endpoint: "", clientID: "");
   late SharedPreferences _sharedPreferences;
   final TextEditingController _endpointController = TextEditingController();
   final TextEditingController _clientIDController = TextEditingController();
@@ -842,7 +845,7 @@ class _MyAppState extends State<MyApp> {
   Future<void> _onPressConfigure() async {
     final packageName = (await PackageInfo.fromPlatform()).packageName;
     try {
-      final result = await migrate(packageName);
+      final result = await migrate(packageName, containerName);
       if (kDebugMode) {
         print(result);
       }
@@ -856,6 +859,7 @@ class _MyAppState extends State<MyApp> {
     final clientID = _clientIDController.text;
 
     final authgear = Authgear(
+      name: containerName,
       endpoint: endpoint,
       clientID: clientID,
       isSsoEnabled: _isSsoEnabled,

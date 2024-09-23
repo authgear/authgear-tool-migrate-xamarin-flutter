@@ -188,6 +188,7 @@ namespace AuthgearSample
                 authgear = authgearFactory.CreateAuthgear(
                     new AuthgearOptions(ClientId, AuthgearEndpoint)
                     {
+                        Name = "BIOMETRIC",
                         TokenStorage = tokenStorage,
                         IsSsoEnabled = IsSsoEnabled,
                     }
