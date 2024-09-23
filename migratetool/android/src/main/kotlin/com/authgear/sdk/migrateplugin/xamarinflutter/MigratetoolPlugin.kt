@@ -81,9 +81,13 @@ class MigratetoolPlugin: FlutterPlugin, MethodCallHandler {
       val prefs = getPrefs(packageName)
       for (subKey in subKeys) {
         val key = fullKey(containerName, subKey)
-        val value = prefs.getString(key, "")
-        if (value != "") {
+        Log.d(TAG, "hasXamarinData#probing xamarin key $key")
+        val value = prefs.getString(key, null)
+        if (value != null && value != "") {
+          Log.d(TAG, "hasXamarinData#found value for xamarin key $key")
           return true
+        } else {
+          Log.d(TAG, "hasXamarinData#no value for xamarin key $key")
         }
       }
       return false
@@ -92,12 +96,18 @@ class MigratetoolPlugin: FlutterPlugin, MethodCallHandler {
     fun getValue(keyStore: KeyStore, packageName: String, containerName: String, subKey: String): String? {
       // TODO: Handle MD5 legacy handling
       val prefs = getPrefs(packageName)
-      val valueRaw = prefs.getString(fullKey(containerName, subKey), null)
+      val key = fullKey(containerName, subKey)
+      val valueRaw = prefs.getString(key, null)
       if (valueRaw == null || valueRaw == "") {
         return null
       }
+      Log.d(TAG, "getValue#found value for xamarin key $key")
       val base64Decoded = Base64.decode(valueRaw, Base64.NO_WRAP)
-      return decrypt(keyStore, packageName, base64Decoded)
+      val decryptedValue = decrypt(keyStore, packageName, base64Decoded)
+      if (decryptedValue != null) {
+        Log.d(TAG, "getValue#decrypted value for xamarin key $key")
+      }
+      return decryptedValue
     }
 
     // A port of https://github.com/xamarin/Essentials/blob/main/Xamarin.Essentials/SecureStorage/SecureStorage.android.cs#L364
@@ -223,6 +233,7 @@ class MigratetoolPlugin: FlutterPlugin, MethodCallHandler {
   }
 
   fun migrate(packageName: String, containerName: String): Boolean {
+    Log.d(TAG, "migrate#start")
     val keyStore = KeyStore.getInstance("AndroidKeyStore")
     keyStore.load(null)
     val refreshToken = xamarinStorage.getValue(keyStore, packageName, containerName, keyRefreshToken)
@@ -230,14 +241,18 @@ class MigratetoolPlugin: FlutterPlugin, MethodCallHandler {
     val biometricKeyId = xamarinStorage.getValue(keyStore, packageName, containerName, keyBiometricKeyId)
     val keyMaker = KeyMaker()
     if (refreshToken != null) {
+      Log.d(TAG, "migrate#migrating refresh token")
       storageSetItem(keyMaker.keyRefreshToken(containerName), refreshToken)
     }
     if (anonymousId != null) {
+      Log.d(TAG, "migrate#migrating anonymous key ID")
       storageSetItem(keyMaker.keyAnonymousKeyId(containerName), anonymousId)
     }
     if (biometricKeyId != null) {
+      Log.d(TAG, "migrate#migrating biometric key ID")
       storageSetItem(keyMaker.keyBiometricKeyId(containerName), biometricKeyId)
     }
+    Log.d(TAG, "migrate#end")
     return refreshToken != null || anonymousId != null || biometricKeyId != null
   }
 
