@@ -78,7 +78,14 @@ class MigratetoolPlugin: FlutterPlugin, MethodCallHandler {
     }
 
     fun hasXamarinData(packageName: String, containerName: String): Boolean {
+      val sharedPrefsAlias = alias(packageName)
       val prefs = getPrefs(packageName)
+      Log.d(TAG, "hasXamarinData#opened share prefs $sharedPrefsAlias")
+      val keyMap = prefs.all
+      for (entry in keyMap) {
+        val key = entry.key
+        Log.d(TAG, "hasXamarinData#found key $key in $sharedPrefsAlias")
+      }
       for (subKey in subKeys) {
         val key = fullKey(containerName, subKey)
         Log.d(TAG, "hasXamarinData#probing xamarin key $key")
